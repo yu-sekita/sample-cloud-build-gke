@@ -1,0 +1,17 @@
+steps:
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build', '-t', 'gcr.io/$PROJECT_ID/sample-fastapi-container:v2', '.' ]
+  id: docker build
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'push', 'gcr.io/$PROJECT_ID/sample-fastapi-container:v2' ]
+  id: docker push
+
+-name: 'gcr.io/cloud-builders/gcloud'
+  args: [ 'container', 'clusters', 'get-credentials', 'sample-gke-cluster', '--zone', 'asia-northeast1-c', '--project', '$PROJECT_ID']
+  id: gcloud container clusters get-credentials
+
+-name: 'gcr.io/cloud-builders/kubectl'
+  args: [ 'apply', '-f', 'k8s-sample.yaml']
+  id: kubectl apply
